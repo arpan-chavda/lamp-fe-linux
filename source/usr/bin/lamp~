@@ -1,0 +1,78 @@
+#!/bin/sh
+YAD="yad --width=350 --height=100 --name=${0##*/}"
+f_var1=t;
+f_var2=s;
+if [ -f "$f_var1" ]; then
+{
+	rm t;
+}
+fi
+if [ -f "$f_var2" ]; then
+{
+	rm s;
+}
+fi
+if [ $(dpkg --get-selections | grep -c php5) -gt 0 ]; then
+{
+$(php --version > t);
+$(fold -9 t | awk '{print $0}' > s);
+php=$(head -n 1 s);
+}
+else
+{
+php="Not Installed";
+}
+fi
+
+if [ $(dpkg --get-selections | grep -c apache2) -gt 0 ]; then
+{
+apache="Running(v2)";
+}
+else
+{
+apache="Not Installed";
+}
+fi
+
+
+if [ $(dpkg --get-selections | grep -c mysql-server) -gt 0 ]; then
+{
+mysql="Running";
+}
+else if [ $(dpkg --get-selections | grep -c mysql-client) -gt 0 ];then
+{
+mysql="Running";
+}
+else
+{
+mysql="Not Installed";
+}
+fi
+fi
+
+act=$($YAD --sticky --title "LAMP(FE)" --form --columns=2 --field="Apache Server:LBL" --field="MySQL:LBL" --field="PHP:LBL" --field="$apache:LBL" --field="$mysql:LBL"  --field="$php:LBL" --button="Restart Apache:2" --button="Open Localhost:1")
+reply=$?
+#echo $act
+if [ $reply -eq "2" ]; then
+{
+if [ "$apache" = "Not Installed" ]; then
+{
+zenity --notification --window-icon="info" --text="Apache is not installed";
+exit;
+}
+else
+{
+gksudo /etc/init.d/apache2 graceful;
+zenity --notification --window-icon="info" --text="Apache server restarted";
+exit;
+}
+fi
+}
+fi
+if [ $reply -eq "1" ]; then
+{
+	firefox http://localhost;
+	exit;
+}
+fi
+

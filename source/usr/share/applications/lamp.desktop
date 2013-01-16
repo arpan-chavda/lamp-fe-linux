@@ -1,0 +1,10 @@
+[Desktop Entry]
+Version=1.01
+Name=lamp
+Comment=Front end for LAMP
+GenericName=lamp
+Exec=/usr/bin/lamp
+Terminal=false
+X-MultipleArgs=false
+Type=Application
+Categories=GNOME;System;
